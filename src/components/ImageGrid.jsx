@@ -1,9 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import ImageCard from './ImageCard'
 
 function ImageGrid({ data }) {
 
-    let [imageData, setImageData] = useState(data)
+    useEffect(() => {
+        setImageData(data)
+    }, [data])
+
+    let [imageData, setImageData] = useState([])
 
   return (
     <div className='image-grid'>
