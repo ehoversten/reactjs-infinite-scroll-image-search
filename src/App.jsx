@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
 import axios from 'axios';
 import ImageGrid from './components/ImageGrid';
 import './App.css'
@@ -10,12 +10,22 @@ function App() {
   let [pageNum, setPageNum] = useState(1);
   let [perPage, setPerPage] = useState(15);
   let [search, setSearch] = useState('nature');
+  let [loading, setLoading] = useState(true)
   let [error, setError] = useState(null);
 
   const controllerRef = useRef();
   
   useEffect(() => {
+    // setLoading(true);
     loadImages();
+    return () => {
+      console.log('App cleanup')
+      // if(controllerRef.current) {
+      //   console.log('controller cancelling')
+      //   controllerRef.current.abort();
+      // }
+      // setLoading(false);
+    }
   }, [pageNum, search]) 
 
   
@@ -40,11 +50,18 @@ function App() {
           console.log("Response: ", res);
           console.log("Data: ", res.data);
           setResults(res.data);
+          setLoading(false);
         })
         .catch(err => {
           console.log(err);
-          setError(err);
-        })
+          if(err.code !== "ERR_CANCELED") {
+            console.log("Error: ", err);
+            setError(err.message);
+            setLoading(false);
+          } else {
+            console.log("signal aborted...");
+          }
+        });
   }
   
   const prevPage = (e) => {
@@ -75,7 +92,13 @@ function App() {
         <button onClick={prevPage}>Previous</button>
         <button onClick={loadImages}>Load Images</button>
         <button onClick={nextPage}>Next</button>
-        <ImageGrid data={results.photos}/>
+        { error ? (<div>Error : {error}</div>) : null }
+        { loading ? (<div>Loading ...</div>) :  
+          <ImageGrid photos={results.photos}/>
+        }
+        {/* <Suspense fallback={<div>Loading ...</div>}>
+          <ImageGrid photos={results.photos}/>
+        </Suspense> */}
       </div>
     </>
   )

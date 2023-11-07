@@ -1,19 +1,22 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Suspense } from 'react'
 import ImageCard from './ImageCard'
 
-function ImageGrid({ data }) {
+function ImageGrid({ photos }) {
 
-    useEffect(() => {
-        setImageData(data)
-    }, [data])
+    // useEffect(() => {
+    //     setImageData(data);
+    //     return () => {
+    //         console.log('Grid cleanup')
+    //       }
+    // }, [data])
 
-    let [imageData, setImageData] = useState([])
+    // let [imageData, setImageData] = useState([])
 
   return (
     <div className='image-grid'>
-        { imageData.map((data) => (
-            <ImageCard data={data} />
-        )) }
+        { /* (data.length > 0) ? */ photos.map((data) => (
+            <ImageCard data={data} key={data.id}/>
+        )) /* : null */}
     </div>
   )
 }
