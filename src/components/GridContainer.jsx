@@ -29,8 +29,14 @@ function GridContainer() {
         observer.current = new IntersectionObserver(entries => {
             if(entries[0].isIntersecting && hasMore) {
                 console.log('is Visible');
-                setPageNum(prev => prev + 1);
-                loadImages();
+                // setPageNum(prev => prev + 1);
+                setPageNum(prev => {
+                    console.log("Prev Value: ", prev)
+                    return prev + 1;
+                });
+                // loadImages();
+                // setTimeout(loadImages, 2000)
+                // nextPage();
             }
         })
         if(node) {
@@ -39,29 +45,30 @@ function GridContainer() {
    
     }, [isLoading, hasMore]);
 
-    // useEffect(() => {
-        // if(search !== '') {
-        //     loadImages();
-        // }
+    useEffect(() => {
+        if(search !== '') {
+            loadImages();
+        }
         // Run Cleanup functionality
-        // return () => {
-            // console.log('App Cleanup')
+        return () => {
+            console.log('App Cleanup')
             // if(controllerRef.current) {
             //     controllerRef.current.about();
             //     console.log('controller cancelled');
             // }
-        // }
-    // }, [search, pageNum])
+        }
+    }, [pageNum])
 
     // ** Eventually move this to another file ** //
     const loadImages = async () => {
         let url;
         console.log('Page Num: ', pageNum);
-        if(nextUrlPage !== '') {
-            url = nextUrlPage;
-        } else {
-            url = `https://api.pexels.com/v1/search?query=${search}&page=${pageNum}&per_page=${perPage}`;
-        }
+        // if(nextUrlPage !== '') {
+        //     url = nextUrlPage;
+        // } else {
+        //     url = `https://api.pexels.com/v1/search?query=${search}&page=${pageNum}&per_page=${perPage}`;
+        // }
+        url = `https://api.pexels.com/v1/search?query=${search}&page=${pageNum}&per_page=${perPage}`;
         const headers = {
           "content-type": "application/json",
           "Authorization": import.meta.env.VITE_IMAGE_API
@@ -90,9 +97,12 @@ function GridContainer() {
       
       const nextPage = (e) => {
         // console.log(e.target);
-        setPageNum(prev => prev + 1);
-        setTimeout(loadImages, 1000);
-        // loadImages();
+        setPageNum(prev => {
+            console.log("Prev Value: ", prev)
+            return prev + 1;
+        });
+        // setTimeout(loadImages, 1000);
+        loadImages();
         // loadImages(nextUrlPage);
       }
 
@@ -112,6 +122,8 @@ function GridContainer() {
         setPhotoArr([]);
       }
 
+      // --> QUESTION --> What happens when we run out of results(?)
+
   return (
     <div>
         <h1>Infinite Scroll Image Search</h1>
@@ -127,7 +139,7 @@ function GridContainer() {
         <div className="btn-container">
             <button onClick={clearSearch}>Clear Search</button>
             <button onClick={prevPage}>Previous</button> 
-            <button onClick={nextPage}>I want MORE!!</button>
+            <button onClick={nextPage}>Next</button>
         </div>
       
         { error && <h2>Error: {error.msg}</h2>}
