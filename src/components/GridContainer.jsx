@@ -13,12 +13,9 @@ function GridContainer() {
     let [nextUrlPage, setNextUrlPage] = useState('');
     let [search, setSearch] = useState('');
     let [isLoading, setIsLoading] = useState(false)
-    // let [loading, setLoading] = useState(false)
     let [error, setError] = useState(null);
 
     // - Initalize References
-    // const controllerRef = useRef();
-    // const effectRef = useRef(false)
     const observer = useRef();
     const lastElementRef = useCallback(node => {
         if(isLoading) return;
@@ -29,14 +26,10 @@ function GridContainer() {
         observer.current = new IntersectionObserver(entries => {
             if(entries[0].isIntersecting && hasMore) {
                 console.log('is Visible');
-                // setPageNum(prev => prev + 1);
                 setPageNum(prev => {
                     console.log("Prev Value: ", prev)
                     return prev + 1;
                 });
-                // loadImages();
-                // setTimeout(loadImages, 2000)
-                // nextPage();
             }
         })
         if(node) {
@@ -105,7 +98,6 @@ function GridContainer() {
         });
         // setTimeout(loadImages, 1000);
         loadImages();
-        // loadImages(nextUrlPage);
       }
 
       const handleChange = (e) => {
