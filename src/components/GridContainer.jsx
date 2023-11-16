@@ -118,6 +118,12 @@ function GridContainer() {
         loadImages();
       }
 
+      const handlePrevSearch = (e) => {
+        // console.log("Event: ", e.target);
+        console.log("Value: ", e.target.textContent);
+        
+      }
+
       const clearSearch = () => {
         setSearch('');
         setPageNum(1);
@@ -151,9 +157,7 @@ function GridContainer() {
 
         { prevSearches && prevSearches.map((text, index) => {
             return (
-                <div className="prev-search" key={index}>
-                    {text}
-                </div>
+                <button className="prev-search" key={index} onClick={handlePrevSearch}>{text}</button>
             )
         }) }
 
