@@ -5,15 +5,17 @@ import ImageCard from './ImageCard';
 function GridContainer() {
 
     // -- Initalize State
+    let [search, setSearch] = useState('');
     let [results, setResults] = useState(null);
     let [photoArr, setPhotoArr] = useState([]);
     let [pageNum, setPageNum] = useState(1);
     let [perPage, setPerPage] = useState(15);
     let [hasMore, setHasMore] = useState(true);
     let [nextUrlPage, setNextUrlPage] = useState('');
-    let [search, setSearch] = useState('');
     let [isLoading, setIsLoading] = useState(false)
     let [error, setError] = useState(null);
+
+    let [prevSearches, setPrevSeaches] = useState([]);
 
     // - Initalize References
     const observer = useRef();
@@ -107,6 +109,12 @@ function GridContainer() {
 
       const handleSubmit = (e) => {
         e.preventDefault();
+        let savedSearches;
+        localStorage.getItem('search-terms') ? savedSearches = JSON.parse(localStorage.getItem('search-terms')) :  savedSearches = [];
+        savedSearches.push(search);
+        console.log('Local Storage: ', savedSearches)
+        localStorage.setItem('search-terms', JSON.stringify(savedSearches));
+        setPrevSeaches(savedSearches);
         loadImages();
       }
 
@@ -140,6 +148,14 @@ function GridContainer() {
       
         { error && <h2>Error: {error.msg}</h2>}
         { isLoading && <div>Loading...</div>}
+
+        { prevSearches && prevSearches.map((text, index) => {
+            return (
+                <div className="prev-search" key={index}>
+                    {text}
+                </div>
+            )
+        }) }
 
         { photoArr && photoArr.map((photo, index) => {
             if(photoArr.length === index + 1) {
