@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import GridContainer from './components/GridContainer';
 import './App.css'
 
 function App() {
@@ -6,7 +6,7 @@ function App() {
   return (
     <>
       <div>
-        <h1>Vite + React</h1>
+        <GridContainer />
       </div>
     </>
   )
