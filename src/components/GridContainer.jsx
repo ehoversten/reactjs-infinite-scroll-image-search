@@ -12,7 +12,7 @@ function GridContainer() {
     let [hasMore, setHasMore] = useState(true);
     let [nextUrlPage, setNextUrlPage] = useState('');
     let [search, setSearch] = useState('');
-    let [isLoading, setIsLoading] = useState(true)
+    let [isLoading, setIsLoading] = useState(false)
     // let [loading, setLoading] = useState(false)
     let [error, setError] = useState(null);
 
@@ -46,6 +46,7 @@ function GridContainer() {
     }, [isLoading, hasMore]);
 
     useEffect(() => {
+        console.log("render");
         if(search !== '') {
             loadImages();
         }
@@ -61,6 +62,7 @@ function GridContainer() {
 
     // ** Eventually move this to another file ** //
     const loadImages = async () => {
+        setIsLoading(true);
         let url;
         console.log('Page Num: ', pageNum);
         // if(nextUrlPage !== '') {
@@ -76,10 +78,10 @@ function GridContainer() {
         try {
             let res = await axios.get(url, { headers })
             console.log("Data: ", res);
-            setIsLoading(false);
             setResults(res.data);
             setNextUrlPage(res.data.next_page);
             setPhotoArr(prev => [...prev, ...res.data.photos])
+            setIsLoading(false);
         } catch(err) {
             console.log("Error: ", err);        
             setIsLoading(false);
@@ -118,6 +120,8 @@ function GridContainer() {
 
       const clearSearch = () => {
         setSearch('');
+        setPageNum(1);
+        setNextUrlPage('')
         setResults(null);
         setPhotoArr([]);
       }
@@ -131,7 +135,7 @@ function GridContainer() {
         <div className="form-container">
             <form onSubmit={handleSubmit}>
                 <label htmlFor="search">Searching for: </label>
-                <input type="text" id="search" name="search" onChange={handleChange}/>
+                <input type="text" id="search" name="search" onChange={handleChange} value={search}/>
                 <button type="submit">Find</button>
             </form>
         </div>
@@ -143,7 +147,7 @@ function GridContainer() {
         </div>
       
         { error && <h2>Error: {error.msg}</h2>}
-        {/* { isLoading && <div>Loading...</div>} */}
+        { isLoading && <div>Loading...</div>}
 
         { photoArr && photoArr.map((photo, index) => {
             if(photoArr.length === index + 1) {
