@@ -118,12 +118,14 @@ function GridContainer() {
 
       const handleSubmit = (e) => {
         e.preventDefault();
+
         let savedSearches;
         localStorage.getItem('search-terms') ? savedSearches = JSON.parse(localStorage.getItem('search-terms')) :  savedSearches = [];
         savedSearches.push(search);
         console.log('Local Storage: ', savedSearches)
         localStorage.setItem('search-terms', JSON.stringify(savedSearches));
         setPrevSeaches(savedSearches);
+        
         loadImages();
       }
 
