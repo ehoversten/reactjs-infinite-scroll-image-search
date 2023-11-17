@@ -45,6 +45,8 @@ function GridContainer() {
         if(search !== '') {
             loadImages();
         }
+        let searchStorage = localStorage.getItem('search-terms');
+        if(searchStorage) setPrevSeaches(JSON.parse(searchStorage));
         // Run Cleanup functionality
         return () => {
             console.log('App Cleanup')
@@ -121,7 +123,7 @@ function GridContainer() {
       const handlePrevSearch = (e) => {
         // console.log("Event: ", e.target);
         console.log("Value: ", e.target.textContent);
-        
+
       }
 
       const clearSearch = () => {
