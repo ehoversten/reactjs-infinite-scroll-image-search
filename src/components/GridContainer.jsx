@@ -17,6 +17,11 @@ function GridContainer() {
 
     let [prevSearches, setPrevSeaches] = useState([]);
 
+    const headers = {
+        "content-type": "application/json",
+        "Authorization": import.meta.env.VITE_IMAGE_API
+      }
+
     // - Initalize References
     const observer = useRef();
     const lastElementRef = useCallback(node => {
@@ -60,18 +65,14 @@ function GridContainer() {
     // ** Eventually move this to another file ** //
     const loadImages = async () => {
         setIsLoading(true);
-        let url;
         console.log('Page Num: ', pageNum);
         // if(nextUrlPage !== '') {
         //     url = nextUrlPage;
         // } else {
         //     url = `https://api.pexels.com/v1/search?query=${search}&page=${pageNum}&per_page=${perPage}`;
         // }
-        url = `https://api.pexels.com/v1/search?query=${search}&page=${pageNum}&per_page=${perPage}`;
-        const headers = {
-          "content-type": "application/json",
-          "Authorization": import.meta.env.VITE_IMAGE_API
-        }
+        let url = `https://api.pexels.com/v1/search?query=${search}&page=${pageNum}&per_page=${perPage}`;
+        
         try {
             let res = await axios.get(url, { headers })
             console.log("Data: ", res);
@@ -84,6 +85,12 @@ function GridContainer() {
             setIsLoading(false);
             setError({ msg: err });
         }
+    }
+
+    const prevSearch = (e) => {
+        let searchTerm = e.currentTarget.value;
+        console.log(searchTerm)
+        let url = `https://api.pexels.com/v1/search?query=${searchTerm}&page=${pageNum}&per_page=${perPage}`;
     }
 
     const prevPage = (e) => {
@@ -120,9 +127,29 @@ function GridContainer() {
         loadImages();
       }
 
-      const handlePrevSearch = (e) => {
+      const handlePrevSearch = async (e) => {
         // console.log("Event: ", e.target);
         console.log("Value: ", e.target.textContent);
+        clearSearch();
+
+        let searchTerm = e.target.textContent.toLowerCase();
+        console.log(searchTerm)
+        let url = `https://api.pexels.com/v1/search?query=${searchTerm}&page=${pageNum}&per_page=${perPage}`;
+
+        try {
+            setIsLoading(true);
+            let res = await axios.get(url, { headers })
+            console.log("Data: ", res);
+            setSearch(searchTerm);
+            setResults(res.data);
+            setNextUrlPage(res.data.next_page);
+            setPhotoArr(prev => [...prev, ...res.data.photos])
+            setIsLoading(false);
+        } catch(err) {
+            console.log("Error: ", err);        
+            setIsLoading(false);
+            setError({ msg: err });
+        }
 
       }
 
